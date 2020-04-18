@@ -58,7 +58,7 @@ class JobCard extends Component {
         let time = Number(opTime);
 
         if (op ==='increment') {
-            time = ((format === 'hours' && time < 24) || (format === 'minutes' && time < 60)) ? time + 1 : 0;
+            time = ((format === 'hours' && time < 23) || (format === 'minutes' && time < 59)) ? time + 1 : 0;
         }
 
         if (op === 'decrement') {

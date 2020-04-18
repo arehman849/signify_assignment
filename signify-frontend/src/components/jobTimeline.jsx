@@ -8,8 +8,9 @@ class JobTimeline extends Component {
         this.props.getTimelineJobs();
     }
     render() { 
-        const timelineJobs = this.props.timelineJob;
+        let timelineJobs = this.props.timelineJob;
         if (timelineJobs.length > 0) {
+            timelineJobs = timelineJobs.sort((a,b) => a.timeInHundredths - b.timeInHundredths);
             return ( 
                 <table className="table table-striped mt-4">
                     <thead>
@@ -29,7 +30,7 @@ class JobTimeline extends Component {
                                     <td>{job.id}</td>
                                     <td>{job.name}</td>
                                     <td>{job.start}</td>
-                                    <td>{job.end}</td>
+                                    <td>{timelineJobs[index + 1] ? timelineJobs[index + 1].start : '24: 00'}</td>
                                 </tr>
                             )
                         })}

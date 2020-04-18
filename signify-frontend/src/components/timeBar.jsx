@@ -8,36 +8,37 @@ class TimeBar extends Component {
         super(props)
         this.handleClick = this.handleClick.bind(this);
     }
-    colorDivRef = createRef();
-    componentDidMount() {
-        const data = [ 2, 4, 2, 6, 8 ]
-        // this.drawBarChart(data)
-    }
 
     handleClick() {
         this.props.getAllJobs();
     }
-
-//     drawBarChart(data)  {
-//         const canvasHeight = 400
-// const canvasWidth = 600
-// const scale = 20
-// const svgCanvas = d3.select(this.refs.canvas)
-//     .append('svg')
-//     .attr('width', canvasWidth)
-//     .attr('height', canvasHeight)
-//     .style('border', '1px solid black')
-// svgCanvas.selectAll('rect')
-//     .data(data).enter()
-//         .append('rect')
-//         .attr('width', (datapoint) => datapoint * scale)
-//         .attr('height', 40)
-//         .attr('fill', 'orange')
-//         .attr('x', (datapoint, iteration) => iteration * 45)
-//         .attr('y', 0)
-//     }
     render() { 
         console.log(this.props);
+        const timeScale = () => {
+            let comp = []
+            for(let i = 1; i < 25; i++) {
+             comp.push(<div className='border-left border-dark' key={i} style={{flex:1, textAlign: 'right'}}>{i}</div>)
+            }
+            return comp;
+        }
+        const changeStartTime = (e) => {
+            window.confirm(e.target.getAttribute('data-start'));
+        }
+        const renderTimeBar = () => {
+            let jobs = this.props.timelineJobs
+            jobs = jobs.sort((a, b) => a.timeInHundredths - b.timeInHundredths);
+            let comp = [];
+            comp.push(<div className="border-left border-dark" key='emptySpace' style={{flex:jobs[0].timeInHundredths - 0, backgroundColor: 'white'}}></div>)
+            jobs.forEach((job, index) => {
+                    if (jobs[index + 1]) {
+                        console.log(job.color)
+                        comp.push(<div onClick={(e)=> changeStartTime(e)}className="border-left border-dark" key={index} style={{flex:jobs[index + 1].timeInHundredths - job.timeInHundredths, backgroundColor: job.color}} data-start={job.start}></div>)
+                    }
+                })
+            
+            comp.push(<div onClick={(e)=> changeStartTime(e)} className="border-left border-dark" key='lastSpace' style={{flex:24 - jobs[jobs.length - 1].timeInHundredths, backgroundColor: jobs[jobs.length - 1].color}} data-start={jobs[jobs.length - 1].start}></div>)
+            return comp;
+        }
         return ( 
             <div className='container mt-5'>
                 <div className='row'  style={{height: '100px'}}>
@@ -45,28 +46,31 @@ class TimeBar extends Component {
                         <button className='btn btn-primary btn-block h-100' onClick={this.handleClick}>choose job</button>
                     </div>
                     <div className='col-10 border h-100 p-0'>
-                        <div className='h-75 border' ref={this.colorDivRef} >
-                            colors here
+                        <div className='h-75' ref={this.colorDivRef} >
+                        <div className="border" style={{flex:24, display: 'flex',  height: '100%'}}>
+                            {this.props.timelineJobs.length && renderTimeBar()}
+                        </div>
                         </div>
                         <div className='h-25 border'>
-                            scale here
+                            <div style={{flex:24, display: 'flex',  height: '100%'}} >
+                                {timeScale()}
+                            </div>
                         </div>
                     </div>
                 </div>
-                {/* <div ref="canvas"></div>  */}
             </div>
          );
     }
 }
 const mapDispatchToProps = dispatch => {
     return {
-        getAllJobs: () => dispatch(getAllJobs()),
+        getAllJobs: () => dispatch(getAllJobs())
     }
 }
 
 const mapStateToProps = state => {
     return {
-        
+        timelineJobs: state.jobs.timeline
     }
 }
 

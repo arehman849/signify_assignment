@@ -41,8 +41,7 @@ route.post('/postJob', (req, res) => {
             id: jobs.length + 1,
             name: req.body.job,
             color: req.body.color,
-            start: '',
-            end: ''
+            start: ''
         };
         jobs.push(job);
         res.send(job);
@@ -51,12 +50,18 @@ route.post('/postJob', (req, res) => {
     }
 })
 
+const convertTimeToDecimal = (a) => {
+    let time = a.split(':')
+    let hour = Number(time[0]);
+    let min = Number(time[1]) / 60;
+    let timeInHundredths = hour + min;
+    return timeInHundredths;
+}
+
 route.post('/postToTimeline', (req, res) => {
     let job = req.body;
+    job.timeInHundredths = convertTimeToDecimal(job.start);
     console.log(job);
-    job.end = '24:00';
-    if(jobTimeLine[jobTimeLine.length - 1])
-      jobTimeLine[jobTimeLine.length - 1].end = job.start;
     jobTimeLine.push(job);
     res.send(jobTimeLine);
 })
